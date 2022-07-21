@@ -1,0 +1,7 @@
+[error] D:\Daneshgah\final project\code\recommenderV2\project\Dependencies.scala:3:51: value %% is not a member of String
+[error]   lazy val SparkCore         = "org.apache.spark" %% "spark-core" % "3.2.0"
+[error]                                                   ^
+[error] D:\Daneshgah\final project\code\recommenderV2\project\Dependencies.scala:4:51: value %% is not a member of String
+[error]   lazy val SparkMLlib        = "org.apache.spark" %% "spark-mllib" % "3.2.0"
+[error]                                                   ^
+[error] two errors found

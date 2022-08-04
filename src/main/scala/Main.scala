@@ -37,6 +37,36 @@ object Main extends App {
   val movies = loader.getMovies()
   val ratings = loader.getRatings()
 
+  val genres: Set[String] = Set(
+    "Action",
+    "Adventure",
+    "Animation",
+    "Children's",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Thriller",
+    "War",
+    "Western",
+  )
+
+  val getMovieGenresFeature = udf { (column: String) =>
+    val movieGenres = column.split("\\s*\\|\\s*").toSet
+    Vectors.dense {
+      genres.map { genre =>
+        if (movieGenres.contains(genre)) 1D else 0D
+      }.toArray
+    }
+  }
+
   val separateByBar = udf { (column: String) =>
     Vectors.dense(
       column.split("\\s*\\|\\s*").map {
@@ -84,7 +114,8 @@ object Main extends App {
       users.col("Occupation") cast "Int" as "Occupation" ,
       users.col("Age") cast "Int" as "Age",
       movies.col("Genres") as "Genres",
-      likesOrNot(ratings.col("Rating")) cast IntegerType as "label"
+      likesOrNot(ratings.col("Rating")) cast IntegerType as "label",
+      getMovieGenresFeature(ratings.col("Genres")) cast VectorType as "genres_feature"
     )
 
   ratings2.show()
@@ -95,7 +126,7 @@ object Main extends App {
 //      .csv("src\\main\\resources\\data\\rates_2")
 
   val assembler = new VectorAssembler()
-    .setInputCols(Array("Gender","Age","Occupation"))
+    .setInputCols(Array("Gender","Age","Occupation", "genres_feature"))
     .setOutputCol("features")
 
 //  val labelAssembler = new VectorAssembler()
